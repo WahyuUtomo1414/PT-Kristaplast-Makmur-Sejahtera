@@ -9,6 +9,7 @@ use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use App\Filament\Widgets\ProductTable;
 use App\Filament\Widgets\StatsOverview;
+use App\Filament\Pages\Auth\LoginCustom;
 use Filament\Http\Middleware\Authenticate;
 use App\Filament\Pages\Auth\RegisterCustom;
 use Illuminate\Session\Middleware\StartSession;
@@ -33,6 +34,7 @@ class OrdersPanelProvider extends PanelProvider
             ->brandLogo($this->getBrandLogo())
             ->brandLogoHeight($this->getBrandLogoHeight())
             ->favicon(asset('images/3.png'))
+            //->login(LoginCustom::class)
             ->login()
             ->registration(RegisterCustom::class)
             ->colors([
