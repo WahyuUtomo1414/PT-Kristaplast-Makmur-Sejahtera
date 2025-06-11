@@ -1,0 +1,8 @@
+body {
+    background-image: url("/public/images/13.jpeg");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    background-attachment: fixed;
+    /* background-color: #22c55e; */
+}
