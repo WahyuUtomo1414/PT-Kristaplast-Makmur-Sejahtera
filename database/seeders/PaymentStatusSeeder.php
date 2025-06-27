@@ -32,7 +32,7 @@ class PaymentStatusSeeder extends Seeder
             ],
             [
                 'id' => 14,
-                'status_type_id' => 3,
+                'status_type_id' => 4,
                 'name' => 'CONFIRMED',
                 "desc" => 'Status for confirmed',
                 'active' => true,
