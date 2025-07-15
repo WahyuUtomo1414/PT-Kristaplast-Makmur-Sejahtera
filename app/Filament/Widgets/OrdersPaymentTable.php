@@ -82,11 +82,6 @@ class OrdersPaymentTable extends BaseWidget
                 TextColumn::make('status.name')
                     ->label('Payment Status')
                     ->badge()
-                    ->color(fn ($state) => match ($state) {
-                        'PENDING' => 'info',
-                        'CONFIRMMED' => 'success',
-                        'FAILED' => 'danger',
-                    })
                     ->searchable()
                     ->sortable(),
                 SelectColumn::make('order.status.name')
