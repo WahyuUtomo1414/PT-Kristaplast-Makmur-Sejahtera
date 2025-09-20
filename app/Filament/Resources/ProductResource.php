@@ -16,6 +16,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\Layout\View;
 use Filament\Forms\Components\FileUpload;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\ProductResource\Pages;
@@ -77,44 +78,11 @@ class ProductResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('productType.name')
-                    ->label('Product Type')
-                    ->sortable(),
-                TextColumn::make('name')
-                    ->searchable(),
-                ImageColumn::make('images')
-                    ->label('Images'),
-                TextColumn::make('desc')
-                    ->limit(50)
-                    ->label('Description'),
-                TextColumn::make('price')
-                    ->label('Price')
-                    ->prefix('Rp.')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('status.name'),
-                TextColumn::make('createdBy.name')
-                    ->label('Created By')
-                    ->visible(fn () => Auth::user()->role_id === 1),
-                TextColumn::make('updatedBy.name')
-                    ->label("Updated by")
-                    ->visible(fn () => Auth::user()->role_id === 1),
-                TextColumn::make('deletedBy.name')
-                    ->label("Deleted by")
-                    ->visible(fn () => Auth::user()->role_id === 1),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('deleted_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
+                View::make('filament.component.product-card'),
+            ])->contentGrid([
+                'md' => 2,
+                'xl' => 3
+            ])            
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
             ])
