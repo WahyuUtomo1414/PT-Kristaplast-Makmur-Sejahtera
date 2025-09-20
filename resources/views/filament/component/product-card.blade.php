@@ -12,7 +12,7 @@
         class="w-full h-40 object-cover">
 
         <!-- Content -->
-        <div class="p-4 space-y-2">
+        <div class="p-2 space-y-2">
             <h3 class="text-lg font-semibold" style="color: var(--color-text-heading)">
                 {{ $product->name }}
             </h3>
@@ -21,10 +21,15 @@
                 {{ $product->productType->name }}
             </h3>
 
-            <div class="flex justify-between items-center mt-3 space-x-2">
+            <div class="mt-3 space-y-1">
                 {{-- Harga setelah diskon --}}
-                <span class="text-lg font-bold text-green-600">
+                <span class="block text-lg font-bold text-green-600">
                     Rp {{ number_format($product->price, 0, ',', '.') }}
+                </span>
+
+                {{-- Stok --}}
+                <span class="block text-sm font-medium text-gray-600">
+                    Stok: {{ $product->stock }}
                 </span>
             </div>
         </div>

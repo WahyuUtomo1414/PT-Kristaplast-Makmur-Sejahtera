@@ -82,7 +82,6 @@ class ProductResource extends Resource
                 'sm' => 1,
                 'md' => 2,
                 'lg' => 3,
-                'xl' => 4
             ])            
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
