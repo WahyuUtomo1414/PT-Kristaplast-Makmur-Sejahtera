@@ -30,8 +30,10 @@ class ProductTable extends BaseWidget
             ->columns([
                 View::make('filament.component.product-card'),
             ])->contentGrid([
+                'sm' => 1,
                 'md' => 2,
-                'xl' => 3
+                'lg' => 3,
+                'xl' => 4
             ])
             ->searchable();
     }

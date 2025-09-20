@@ -60,7 +60,7 @@ class ProductSeeder extends Seeder
             DB::table('product')->insert([
                 'product_type_id' => $typeIds[array_rand($typeIds)],
                 'name' => $name,
-                'images' => json_encode(['default.png']),
+                'images' => 'default.png',
                 'desc' => 'Produk ' . strtolower($name) . ' berkualitas untuk kebutuhan sehari-hari.',
                 'price' => rand(2000, 50000),
                 'status_id' => 1, // default ready

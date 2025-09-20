@@ -6,8 +6,8 @@
     <div class="overflow-hidden">
         <!-- Banner -->
         <img src="{{ $product->images 
-            ? Storage::disk('public')->url($product->images) 
-            : asset('products/no-image.png') }}"
+                ? Storage::disk('public')->url($product->images) 
+                : asset('products/no-image.png') }}"
         alt="{{ $product->name }}"
         class="w-full h-40 object-cover">
 
