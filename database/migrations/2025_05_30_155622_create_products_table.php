@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('product_type_id')->constrained('product_type');
             $table->string('name', 128);
             $table->string('images', 128);
+            $table->integer('stock')->default(0);
             $table->text('desc')->nullable();
             $table->double('price');
             $this->base($table);

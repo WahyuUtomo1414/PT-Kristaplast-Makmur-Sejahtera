@@ -61,6 +61,7 @@ class ProductSeeder extends Seeder
                 'product_type_id' => $typeIds[array_rand($typeIds)],
                 'name' => $name,
                 'images' => 'default.png',
+                'stock' => 20,
                 'desc' => 'Produk ' . strtolower($name) . ' berkualitas untuk kebutuhan sehari-hari.',
                 'price' => rand(2000, 50000),
                 'status_id' => 1, // default ready
