@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('product_type_id')->constrained('product_type');
             $table->string('name', 128);
-            $table->json('images');
+            $table->string('images', 128);
             $table->text('desc')->nullable();
             $table->double('price');
             $this->base($table);

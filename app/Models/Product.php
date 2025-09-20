@@ -13,9 +13,6 @@ class Product extends Model
     use HasFactory, Notifiable, SoftDeletes, AuditedBySoftDelete;
     protected $table = 'product';
     protected $guarded = ['id'];
-    protected $casts = [
-        'images' => 'array',
-    ];
 
     public function status()
     {

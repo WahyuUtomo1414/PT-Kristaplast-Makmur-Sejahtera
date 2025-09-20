@@ -3,17 +3,18 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Product;
-use Filament\Actions\DeleteAction as ActionsDeleteAction;
-use Filament\Actions\EditAction as ActionsEditAction;
-use Filament\Actions\ViewAction as ActionsViewAction;
 use Filament\Tables\Table;
 use Tables\Actions\EditAction;
 use Tables\Actions\ViewAction;
 use Tables\Actions\DeleteAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\Layout\View;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Widgets\TableWidget as BaseWidget;
+use Filament\Actions\EditAction as ActionsEditAction;
+use Filament\Actions\ViewAction as ActionsViewAction;
+use Filament\Actions\DeleteAction as ActionsDeleteAction;
 
 class ProductTable extends BaseWidget
 {
@@ -25,24 +26,12 @@ class ProductTable extends BaseWidget
     {
         return $table
             ->query(Product::query()->with('productType', 'status'))
-            ->defaultPaginationPageOption(5)
+            ->defaultPaginationPageOption(10)
             ->columns([
-                TextColumn::make('productType.name')
-                    ->label('Product Type')
-                    ->sortable(),
-                TextColumn::make('name')
-                    ->searchable(),
-                ImageColumn::make('images')
-                    ->label('Images'),
-                TextColumn::make('desc')
-                    ->limit(50)
-                    ->label('Description'),
-                TextColumn::make('price')
-                    ->label('Price')
-                    ->prefix('Rp.')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('status.name'),
+                View::make('filament.component.product-card'),
+            ])->contentGrid([
+                'md' => 2,
+                'xl' => 3
             ])
             ->searchable();
     }
