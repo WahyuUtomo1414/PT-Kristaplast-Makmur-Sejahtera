@@ -29,7 +29,7 @@ class Orders extends Model
 
     public function detailOrder()
     {
-        return $this->hasMany(OrderDetail::class, 'id_order');
+        return $this->hasMany(OrderDetail::class, 'order_id');
     }
 
     public function ordersPayment()
@@ -37,12 +37,26 @@ class Orders extends Model
         return $this->hasOne(OrdersPayment::class, 'order_id');
     }
 
-    public function calculateTotalPrice(): int
+    public function calculateSubtotal(?int $productId, ?int $quantity): int
     {
-        $productPrice = $this->product?->price ?? 0;
-        $shippingPrice = $this->shipping?->price ?? 0;
-        $quantity = $this->quantity ?? 0;
+        $productPrice = Product::find($productId)?->price ?? 0;
+        $qty = $quantity ?? 0; // kalau null dianggap 0
+        return $productPrice * $qty;
+    }
 
-        return ($productPrice * $quantity) + $shippingPrice;
+    public function calculateTotal(array $detailOrder, ?int $shippingId): int
+    {
+        $subtotal = 0;
+
+        foreach ($detailOrder as $detail) {
+            $subtotal += $this->calculateSubtotal(
+                $detail['product_id'] ?? 0,
+                $detail['quantity'] ?? 0
+            );
+        }
+
+        $shippingPrice = Shiping::find($shippingId)?->price ?? 0;
+
+        return $subtotal + $shippingPrice;
     }
 }

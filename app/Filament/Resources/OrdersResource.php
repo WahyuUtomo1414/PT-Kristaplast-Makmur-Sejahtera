@@ -12,8 +12,6 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\PaymentMethod;
 use Filament\Resources\Resource;
-use Filament\Forms\Components\Tabs;
-use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
@@ -23,10 +21,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
-use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\OrdersResource\Pages;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\OrdersResource\RelationManagers;
 
 class OrdersResource extends Resource
 {
@@ -53,53 +48,109 @@ class OrdersResource extends Resource
                         }
                         return null;
                     }),
-                Select::make('product_id')
-                    ->required()
-                    ->label('Product')
-                    ->options(Product::all()->pluck('name', 'id'))
-                    ->searchable()
-                    ->reactive()
-                    ->columnSpanFull()
-                    ->afterStateUpdated(function ($state, callable $set, callable $get) {
-                        $set('total_price', app(Orders::class)->fill([
-                            'product_id' => $get('product_id'),
-                            'shipping_id' => $get('shipping_id'),
-                            'quantity' => $get('quantity'),
-                        ])->calculateTotalPrice());
-                    }),
+                Repeater::make('detailOrder')
+                    ->label('List Product')
+                    ->schema([
+                        Select::make('product_id')
+                            ->required()
+                            ->label('Product')
+                            ->options(Product::all()->pluck('name', 'id'))
+                            ->reactive()
+                            ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                                $order = app(Orders::class);
+                                $subtotal = $order->calculateSubtotal($state, $get('quantity'));
+                                $set('subtotal', $subtotal);
+                            }),
 
-                TextInput::make('quantity')
-                    ->required()
-                    ->numeric()
+                        TextInput::make('quantity')
+                            ->required()
+                            ->numeric()
+                            ->reactive()
+                            ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                                $order = app(Orders::class);
+                                $subtotal = $order->calculateSubtotal($get('product_id'), $state);
+                                $set('subtotal', $subtotal);
+                            }),
+
+                        TextInput::make('subtotal')
+                            ->numeric()
+                            ->disabled()
+                            ->prefix('Rp. ')
+                            ->dehydrated(),
+                    ])
                     ->reactive()
                     ->afterStateUpdated(function ($state, callable $set, callable $get) {
-                        $set('total_price', app(Orders::class)->fill([
-                            'product_id' => $get('product_id'),
-                            'shipping_id' => $get('shipping_id'),
-                            'quantity' => $get('quantity'),
-                        ])->calculateTotalPrice());
-                    }),
+                        $order = app(Orders::class);
+                        $total = $order->calculateTotal($get('detailOrder') ?? [], $get('shipping_id'));
+                        $set('total_price', $total);
+                    })->columnSpanFull(),
 
                 Select::make('shipping_id')
                     ->required()
+                    ->columnSpanFull()
                     ->label('Shipping')
                     ->options(Shiping::all()->pluck('name', 'id'))
-                    ->searchable()
                     ->reactive()
                     ->afterStateUpdated(function ($state, callable $set, callable $get) {
-                        $set('total_price', app(Orders::class)->fill([
-                            'product_id' => $get('product_id'),
-                            'shipping_id' => $get('shipping_id'),
-                            'quantity' => $get('quantity'),
-                        ])->calculateTotalPrice());
+                        $order = app(Orders::class);
+                        $total = $order->calculateTotal($get('detailOrder') ?? [], $state);
+                        $set('total_price', $total);
                     }),
+                Section::make('orderPayment')
+                    ->label('Pembayaran')
+                    ->schema([
+                        Section::make('Select a payment')
+                        ->description('Select a payment method to auto-fill account details.')
+                        ->icon('heroicon-o-credit-card')
+                        ->schema([
+                            Select::make('payment_method_id')
+                                ->required()
+                                ->label('Payment Method')
+                                ->options(fn () => PaymentMethod::pluck('name', 'id')->toArray())
+                                ->reactive()
+                                ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                                    if ($state) {
+                                        $paymentMethod = PaymentMethod::find($state);
+                                        if ($paymentMethod) {
+                                            $set('account_number', $paymentMethod->account_number);
+                                            $set('account_name', $paymentMethod->account_name);
+                                            $set('payment_procedures', $paymentMethod->payment_procedures);
+                                        }
+                                    } else {
+                                        $set('account_number', null);
+                                        $set('account_name', null);
+                                        $set('payment_procedures', null);
+                                    }
+                                }),
+                            TextInput::make('account_number')
+                                ->label('Account Number'),
+                            TextInput::make('account_name')
+                                ->disabled()
+                                ->label('Account Name'),
+                            Textarea::make('payment_procedures')
+                                ->label('Payment Procedures')
+                                ->disabled()
+                                ->rows(10)
+                                ->columnSpanFull(),
+                            ]),
+                        FileUpload::make('image')
+                            ->required()
+                            ->label('Payment Proof Image')
+                            ->preserveFilenames()
+                            ->columnSpanFull()
+                            ->directory('orders-payments')
+                            ->image()
+                            ->columnSpanFull(),
+                        Textarea::make('note')
+                            ->label('Description')
+                            ->columnSpanFull(),
+                ])->columnSpanFull(),
 
                 TextInput::make('total_price')
                     ->disabled()
                     ->numeric()
                     ->default(0)
-                    ->columnSpanFull()
-                    ->prefix('Rp.')
+                    ->prefix('Rp. ')
                     ->dehydrated(),
                 Select::make('status_id')
                     ->required()
