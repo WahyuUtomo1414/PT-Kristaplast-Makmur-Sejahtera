@@ -201,10 +201,10 @@ class OrdersResource extends Resource
                     ->color('info')
                     ->openUrlInNewTab()
                     ->searchable(),
-                TextColumn::make('product.name')
+                TextColumn::make('detailOrder.product.name')
                     ->label('Product')  
                     ->sortable(),
-                TextColumn::make('quantity')
+                TextColumn::make('detailOrder.quantity')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('shipping.name')
