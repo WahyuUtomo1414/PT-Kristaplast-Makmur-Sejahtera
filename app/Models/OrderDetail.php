@@ -8,19 +8,19 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class PaymentMethod extends Model
+class OrderDetail extends Model
 {
     use HasFactory, Notifiable, SoftDeletes, AuditedBySoftDelete;
-    protected $table = 'payment_method';
+    protected $table = 'order_detail';
     protected $guarded = ['id'];
 
-    public function status()
+    public function product()
     {
-        return $this->belongsTo(Status::class, 'status_id');
+        return $this->belongsTo(Product::class, 'product_id');
     }
 
-    public function orderPayment()
+    public function order()
     {
-        return $this->hasOne(Orders::class, 'order_id');
+        return $this->belongsTo(Orders::class, 'order_id');
     }
 }

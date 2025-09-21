@@ -14,13 +14,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Orders extends Model
 {
     use HasFactory, Notifiable, SoftDeletes, AuditedBySoftDelete;
-    protected $table = 'orders';
+    protected $table = 'order';
     protected $guarded = ['id'];
-
-    public function product()
-    {
-        return $this->belongsTo(Product::class, 'product_id');
-    }
 
     public function shipping()
     {
@@ -30,6 +25,11 @@ class Orders extends Model
     public function status()
     {
         return $this->belongsTo(Status::class, 'status_id');
+    }
+
+    public function detailOrder()
+    {
+        return $this->hasMany(OrderDetail::class, 'id_order');
     }
 
     public function ordersPayment()

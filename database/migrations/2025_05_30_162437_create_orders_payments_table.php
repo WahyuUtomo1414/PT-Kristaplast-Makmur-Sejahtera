@@ -15,10 +15,10 @@ return new class extends Migration
     {
         Schema::create('orders_payment', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('order_id')->constrained('orders');
+            $table->foreignId('order_id')->constrained('order');
             $table->foreignId('payment_method_id')->constrained('payment_method');
             $table->string('image', 128);
-            $table->string('desc', 255)->nullable();
+            $table->string('note', 255)->nullable();
             $this->base($table);
         });
     }
