@@ -50,6 +50,7 @@ class OrdersResource extends Resource
                     }),
                 Repeater::make('detailOrder')
                     ->label('List Product')
+                    ->relationship()
                     ->schema([
                         Select::make('product_id')
                             ->required()
@@ -96,55 +97,68 @@ class OrdersResource extends Resource
                         $total = $order->calculateTotal($get('detailOrder') ?? [], $state);
                         $set('total_price', $total);
                     }),
-                Section::make('orderPayment')
-                    ->label('Pembayaran')
+                Section::make('Pembayaran')
+                    ->relationship('ordersPayment') // <--- penting
                     ->schema([
-                        Section::make('Select a payment')
-                        ->description('Select a payment method to auto-fill account details.')
-                        ->icon('heroicon-o-credit-card')
-                        ->schema([
-                            Select::make('payment_method_id')
-                                ->required()
-                                ->label('Payment Method')
-                                ->options(fn () => PaymentMethod::pluck('name', 'id')->toArray())
-                                ->reactive()
-                                ->afterStateUpdated(function ($state, callable $set, callable $get) {
-                                    if ($state) {
-                                        $paymentMethod = PaymentMethod::find($state);
-                                        if ($paymentMethod) {
-                                            $set('account_number', $paymentMethod->account_number);
-                                            $set('account_name', $paymentMethod->account_name);
-                                            $set('payment_procedures', $paymentMethod->payment_procedures);
-                                        }
-                                    } else {
-                                        $set('account_number', null);
-                                        $set('account_name', null);
-                                        $set('payment_procedures', null);
+                        Select::make('payment_method_id')
+                            ->label('Payment Method')
+                            ->options(PaymentMethod::pluck('name', 'id'))
+                            ->searchable()
+                            ->reactive()
+                            ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                                if ($state) {
+                                    $paymentMethod = PaymentMethod::find($state);
+                                    if ($paymentMethod) {
+                                        $set('account_number', $paymentMethod->account_number);
+                                        $set('account_name', $paymentMethod->account_name);
+                                        $set('payment_procedures', $paymentMethod->payment_procedures);
                                     }
-                                }),
-                            TextInput::make('account_number')
-                                ->label('Account Number'),
-                            TextInput::make('account_name')
-                                ->disabled()
-                                ->label('Account Name'),
-                            Textarea::make('payment_procedures')
-                                ->label('Payment Procedures')
-                                ->disabled()
-                                ->rows(10)
-                                ->columnSpanFull(),
-                            ]),
+                                } else {
+                                    $set('account_number', null);
+                                    $set('account_name', null);
+                                    $set('payment_procedures', null);
+                                }
+                            })
+                            ->required(),
+
+                        TextInput::make('account_number')
+                            ->label('Account Number')
+                            ->disabled(),
+
+                        TextInput::make('account_name')
+                            ->label('Account Name')
+                            ->disabled(),
+
+                        Textarea::make('payment_procedures')
+                            ->label('Payment Procedures')
+                            ->disabled()
+                            ->rows(6)
+                            ->columnSpanFull(),
+
                         FileUpload::make('image')
-                            ->required()
-                            ->label('Payment Proof Image')
-                            ->preserveFilenames()
-                            ->columnSpanFull()
+                            ->label('Payment Proof')
                             ->directory('orders-payments')
                             ->image()
+                            ->preserveFilenames()
+                            ->required()
                             ->columnSpanFull(),
+
                         Textarea::make('note')
                             ->label('Description')
                             ->columnSpanFull(),
-                ])->columnSpanFull(),
+                        Select::make('status_id')
+                        ->required()
+                        ->label('Status')
+                        ->searchable()
+                        ->default(function () {
+                            return Status::where('status_type_id', 4)
+                                ->where('name', 'pending')
+                                ->value('id');
+                        })
+                        ->columnSpanFull()
+                        ->options(Status::where('status_type_id', 4)->pluck('name', 'id')),
+                        ])
+                    ->columnSpanFull(),
 
                 TextInput::make('total_price')
                     ->disabled()
