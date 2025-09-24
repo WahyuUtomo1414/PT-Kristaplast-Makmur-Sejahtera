@@ -245,10 +245,11 @@ class OrdersResource extends Resource
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
-                Action::make('exportPdf')
-                    ->label('Export PDF')
-                    ->url(fn ($record) => route('orders.export.pdf', $record))
-                    ->openUrlInNewTab(),
+                Action::make('print')
+                    ->label('Print PDF')
+                    ->icon('heroicon-o-printer')
+                    ->color('warning')
+                    ->url(fn ($record) => route('orders.export.pdf', $record), true),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

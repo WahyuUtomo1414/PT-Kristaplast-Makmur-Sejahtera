@@ -11,51 +11,60 @@
     </style>
 </head>
 <body>
-    <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px;">
-        <!-- Logo -->
-        <div>
-            <img src="{{ public_path('images/3.png') }}" alt="Logo" style="height: 90px;">
-        </div>
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+        <!-- Logo di kiri -->
+        <!-- Info Invoice --> 
+        <h2>Invoice Order {{ $order->code }}</h2> 
+        <p>Customer     : {{ $order->createdBy->name ?? '-' }}</p> 
+        <p>Tanggal      : {{ $order->created_at->format('d F Y') }}</p> 
+        <p>Keterangan   : {{ $order->ordersPayment->note ?? '-' }}</p> 
+        <p>Status Pesanan : {{ $order->status->name ?? '-' }}</p>
 
-        <!-- Info Invoice -->
-        <div style="margin-left:20px;">
-            <h2>Invoice Order #{{ $order->id }}</h2>
-            <p>Customer: {{ $order->customer->name ?? '-' }}</p>
-            <p>Tanggal: {{ $order->created_at->format('d F Y') }}</p>
-            <p>Keterangan: {{ $order->keterangan ?? '-' }}</p>
-        </div>
-    </div>
-
-    <table>
-        <thead>
-            <tr>
-                <th>Produk</th>
-                <th>Qty</th>
-                <th>Harga</th>
-                <th>Subtotal</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($order->detailOrder as $detail)
+        <table>
+            <thead>
                 <tr>
-                    <td>{{ $detail->product->name ?? '-' }}</td>
-                    <td>{{ $detail->quantity }}</td>
-                    <td>Rp {{ number_format($detail->price, 0, ',', '.') }}</td>
-                    <td>Rp {{ number_format($detail->subtotal, 0, ',', '.') }}</td>
+                    <th>Produk</th>
+                    <th>Qty</th>
+                    <th>Harga</th>
+                    <th>Subtotal</th>
+                    <th>Note</th>
                 </tr>
-            @endforeach
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach ($order->detailOrder as $detail)
+                    <tr>
+                        <td>{{ $detail->product->name ?? '-' }}</td>
+                        <td>{{ $detail->quantity }}</td>
+                        <td>Rp {{ number_format($detail->product->price, 0, ',', '.') }}</td>
+                        <td>Rp {{ number_format($detail->subtotal, 0, ',', '.') }}</td>
+                        <td>{{ $detail->note ?? '-' }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
 
-    <div style="margin-top:20px;">
-        <h3>Total: Rp {{ number_format($order->total ?? $order->detailOrder->sum(fn($d) => $d->qty * $d->price), 0, ',', '.') }}</h3>
-        <h3>Metode Pembayaran: {{ $order->ordersPayment->method ?? '-' }}</h3>
-        <h3>
-            Status Pembayaran:
-            <span style="color: {{ ($order->ordersPayment->status ?? '') === 'Lunas' ? 'green' : 'red' }}; font-weight: bold;">
-                {{ $order->ordersPayment->status ?? 'Belum Lunas' }}
-            </span>
-        </h3>
+        <div style="margin-top:20px;">
+            <h3>Metode Pengiriman : {{ $order->shipping->name }}</h3>
+            <h3>Biaya Pengiriman : Rp {{ number_format($order->shipping->price), 0, ',', '.' }}</h3>
+            <h3>Total : Rp {{ number_format($order->total_price ?? $order->detailOrder->sum(fn($d) => $d->qty * $d->price), 0, ',', '.') }}</h3>
+            <h3>Metode Pembayaran : {{ $order->ordersPayment->paymentMethod->name ?? '-' }}</h3>
+            <h3>
+                Status Pembayaran :
+                @php
+                    $status = $order->ordersPayment->status->name ?? 'PENDING';
+                    $statusColor = match(strtoupper($status)) {
+                        'PENDING' => 'blue',
+                        'CONFIRMED' => 'green',
+                        'FAILED' => 'red',
+                        default => 'black'
+                    };
+                @endphp
+                <span style="color: {{ $statusColor }}; font-weight: bold;">
+                    {{ ucfirst(strtolower($status)) }}
+                </span>
+            </h3>
+        </div>
+        
     </div>
 </body>
 </html>
