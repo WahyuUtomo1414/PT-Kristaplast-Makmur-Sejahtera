@@ -1,0 +1,22 @@
+{
+  "public/images/12.jpg": {
+    "file": "assets/12-KdDJXRoH.jpg",
+    "src": "public/images/12.jpg"
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-B8PwqlHj.css",
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/css/custom-login.css": {
+    "file": "assets/custom-login-DDWDt54z.css",
+    "src": "resources/css/custom-login.css",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-T1DpEqax.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  }
+}
