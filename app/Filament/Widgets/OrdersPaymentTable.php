@@ -54,11 +54,11 @@ class OrdersPaymentTable extends BaseWidget
                     ->color('success')
                     ->openUrlInNewTab()
                     ->searchable(),
-                TextColumn::make('order.product.name')
+                TextColumn::make('order.detailOrder.product.name')
                     ->label('Product')
                     ->sortable()
                     ->searchable(),
-                TextColumn::make('order.quantity')
+                TextColumn::make('order.detailOrder.quantity')
                     ->label('Quantity')
                     ->sortable(),
                 TextColumn::make('order.shipping.name')
