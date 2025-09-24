@@ -81,6 +81,10 @@ class OrdersResource extends Resource
                             ->disabled()
                             ->prefix('Rp. ')
                             ->dehydrated(),
+
+                        Textarea::make('note')
+                            ->label('Noted')
+                            ->columnSpanFull(),
                     ])
                     ->reactive()
                     ->afterStateUpdated(function ($state, callable $set, callable $get) {
@@ -241,7 +245,7 @@ class OrdersResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                ViewAction::make(),
+                //ViewAction::make(),
                 Action::make('print')
                     ->label('Print PDF')
                     ->icon('heroicon-o-printer')
