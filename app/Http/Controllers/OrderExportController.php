@@ -14,6 +14,6 @@ class OrderExportController extends Controller
         $pdf = Pdf::loadView('pdf.order', compact('order'))
                 ->setPaper('a4', 'portrait');
 
-        return $pdf->download("order-{$order->id}.pdf");
+        return $pdf->stream("order-{$order->id}.pdf");
     }
 }
