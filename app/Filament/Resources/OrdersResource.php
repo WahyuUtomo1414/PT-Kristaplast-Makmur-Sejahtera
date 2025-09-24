@@ -19,6 +19,8 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Textarea;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
@@ -205,9 +207,6 @@ class OrdersResource extends Resource
                 TextColumn::make('detailOrder.product.name')
                     ->label('Product')  
                     ->sortable(),
-                TextColumn::make('detailOrder.quantity')
-                    ->numeric()
-                    ->sortable(),
                 TextColumn::make('shipping.name')
                     ->label('Shipping')
                     ->sortable(),
@@ -242,14 +241,13 @@ class OrdersResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                ViewAction::make(),
                 Action::make('print')
                     ->label('Print PDF')
                     ->icon('heroicon-o-printer')
                     ->color('warning')
                     ->url(fn ($record) => route('orders.export.pdf', $record), true),
+                EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
