@@ -47,8 +47,11 @@ class ProductResource extends Resource
                 TextInput::make('name')
                     ->required()
                     ->label('Product Name')
-                    ->columnSpanFull()
                     ->maxLength(128),
+                TextInput::make('stock')
+                    ->required()
+                    ->numeric()
+                    ->label('Product Stock'),
                 FileUpload::make('images')
                     ->label('Product Images')
                     ->columnSpanFull()
@@ -61,14 +64,12 @@ class ProductResource extends Resource
                 TextInput::make('price')
                     ->required()
                     ->numeric()
-                    ->columnSpanFull()
                     ->prefix('IDR'),
                 Select::make('status_id')
                     ->required()
                     ->label('Status')
                     ->searchable()
                     ->default(1)
-                    ->columnSpanFull()
                     ->options(Status::where('status_type_id', 2)->pluck('name', 'id')),
             ]);
     }
