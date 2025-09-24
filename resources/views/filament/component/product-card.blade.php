@@ -9,7 +9,7 @@
                 ? Storage::disk('public')->url($product->images) 
                 : asset('products/no-image.png') }}"
         alt="{{ $product->name }}"
-        class="w-full h-40 object-cover">
+        class="w-full min-h-40 max-h-40 object-cover">
 
         <!-- Content -->
         <div class="p-2 space-y-2">
